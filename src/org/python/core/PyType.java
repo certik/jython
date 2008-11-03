@@ -825,6 +825,26 @@ public class PyType extends PyObject implements Serializable {
         return null;
     }
 
+    public PyObject lookup_where_index(String name, int[] where) {
+        PyObject[] mro = this.mro;
+        if (mro == null) {
+            return null;
+        }
+        int i = 0;
+        for (PyObject t : mro) {
+            i++;
+            PyObject dict = t.fastGetDict();
+            if (dict != null) {
+                PyObject obj = dict.__finditem__(name);
+                if (obj != null) {
+                    where[0] = mro.length - i;
+                    return obj;
+                }
+            }
+        }
+        return null;
+    }
+
     public PyObject super_lookup(PyType ref, String name) {
         PyObject[] mro = this.mro;
         if (mro == null) {
